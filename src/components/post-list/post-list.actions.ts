@@ -1,7 +1,8 @@
 import { Dispatch } from 'react-redux';
+import { GET_ALL_BLOGS_API } from '../../urls';
 import HttpRequestDelegate from '../../utils/http-request-delegate';
 import ResponseData from '../../utils/interfaces/http-response';
-import { Post } from './post';
+import { PostObj } from './post';
 
 export const SHOW_ALL = 'SHOW_ALL';
 
@@ -15,7 +16,7 @@ export const changeText = (text: string) => {
 };
 
 interface FetchPostResponse extends ResponseData {
-  blogs: Post[];
+  blogs: PostObj[];
 }
 
 export const REQUEST_POSTS = 'REQUEST_POSTS';
@@ -28,7 +29,7 @@ function requestPosts() {
 
 export const RECEIVE_POSTS = 'RECEIVE_POSTS';
 
-function receivePosts(posts: Post[]) {
+function receivePosts(posts: PostObj[]) {
   return {
     type: RECEIVE_POSTS,
     posts
@@ -41,7 +42,7 @@ export const fetchPosts = () => {
   return (dispatch: Dispatch) => {
     dispatch(requestPosts());
     return HttpRequestDelegate.request(
-      'http://localhost:5000/api/blog/blogs',
+      GET_ALL_BLOGS_API,
       {},
       (data: FetchPostResponse) => {
         dispatch(receivePosts(data.blogs));

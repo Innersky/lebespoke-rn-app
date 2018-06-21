@@ -1,14 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-elements';
+import FullWidthImage from 'react-native-fullwidth-image';
+import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { HomeNavigationState } from '../../containers/home-page/home';
 import { RootReducer } from '../../reducer';
-import { Post } from './post';
+import { PostObj } from './post';
 import { fetchPosts } from './post-list.actions';
+import { PostListState } from './post-list.reducer';
 
 export interface PostListProps {
   text: string;
-  posts: Post[];
-  dispatch: any;
+  posts: PostObj[];
+  dispatch: ThunkDispatch<PostListState, {}, AnyAction>;
+  navigation: NavigationScreenProp<HomeNavigationState>;
 }
 
 const mapStateToProps = (state: RootReducer) => {
@@ -28,22 +36,67 @@ class PostList extends React.Component<PostListProps> {
   }
 
   public render() {
-    return [
-      (<Text key={-1}>{this.props.text}</Text>),
-      ...this.props.posts.map((post, index) => (
-        <Text key={index}>{post.title}</Text>
-      ))
-    ];
+    return (
+      <FlatList
+        data={this.props.posts.map((post: PostObj, index) => {
+          return {
+            key: index,
+            post
+          };
+        })}
+        renderItem={({item}) =>
+          <View style={styles.container}>
+            <View style={styles.imageContainer}>
+              <FullWidthImage
+                style={styles.image}
+                source={{uri: item.post.coverImageSrc ||
+                  'http://cdn.lebespoke.com/static/image/logo.png'}}
+              />
+            </View>
+            <Text
+              numberOfLines={2}
+              style={styles.text}
+              onPress={() => this.props.navigation.navigate('Post', {
+                post: item.post
+              })}
+            >
+              {item.post.title}
+            </Text>
+          </View>}
+        numColumns={2}
+      />
+    );
   }
 }
 
-export default connect(mapStateToProps)(PostList);
+const PostListContainer = connect(mapStateToProps)(PostList);
+
+export default PostListContainer;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    margin: 10
   },
+  text: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    marginTop: 5
+  },
+  imageContainer: {
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 0
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  image: {
+    borderRadius: 2
+  }
 });

@@ -1,9 +1,15 @@
-import { Post } from './post';
+import { ReduxAction } from '../../utils/interfaces/redux-action';
+import { PostObj } from './post';
 import { CHANGE_TEXT, RECEIVE_POSTS, REQUEST_POSTS } from './post-list.actions';
 
 export interface PostListState {
   text: string;
-  posts: Post[];
+  posts: PostObj[];
+}
+
+interface Action extends ReduxAction {
+  text?: string;
+  posts?: PostObj[];
 }
 
 export default function postList(
@@ -11,7 +17,7 @@ export default function postList(
     text: 'tasdqwq',
     posts: []
   },
-  action: any
+  action: Action
 ) {
   switch (action.type) {
     case CHANGE_TEXT:
@@ -27,7 +33,7 @@ export default function postList(
     case RECEIVE_POSTS:
       return {
         ...state,
-        posts: action.posts
+        posts: action.posts || []
       };
     default:
       return state;
