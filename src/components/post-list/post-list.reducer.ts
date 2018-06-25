@@ -3,8 +3,8 @@ import { PostObj } from './post';
 import { CHANGE_TEXT, RECEIVE_POSTS, REQUEST_POSTS } from './post-list.actions';
 
 export interface PostListState {
-  text: string;
-  posts: PostObj[];
+  text?: string;
+  posts?: PostObj[];
 }
 
 interface Action extends ReduxAction {

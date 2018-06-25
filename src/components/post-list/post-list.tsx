@@ -10,12 +10,11 @@ import { HomeNavigationState } from '../../containers/home-page/home';
 import { RootReducer } from '../../reducer';
 import { PostObj } from './post';
 import { fetchPosts } from './post-list.actions';
-import { PostListState } from './post-list.reducer';
 
 export interface PostListProps {
   text: string;
   posts: PostObj[];
-  dispatch: ThunkDispatch<PostListState, {}, AnyAction>;
+  dispatch: ThunkDispatch<RootReducer, {}, AnyAction>;
   navigation: NavigationScreenProp<HomeNavigationState>;
 }
 
