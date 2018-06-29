@@ -4,10 +4,15 @@ import {createStackNavigator, NavigationScreenProp} from 'react-navigation';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import Post from './components/post-list/post';
+import Post from './components/post/post';
 import Home from './containers/home-page/home';
 import rootReducer from './reducer';
-import Login, {default as LoginContainer} from './components/user/login';
+import Login, {default as LoginContainer, User} from './components/user/login';
+import HttpRequestDelegate from './utils/http-request-delegate';
+import {GET_USER_INFO_API} from './urls';
+import ResponseData from './utils/interfaces/http-response';
+import AddContent from './components/post/post-editor/add-content';
+import SelectImages from './components/post/post-editor/select-images';
 
 const store = createStore(
   rootReducer,
@@ -53,6 +58,20 @@ const MainStack = createStackNavigator(
   }
 );
 
+const AddPostStack = createStackNavigator(
+  {
+    SelectImages: {
+      screen: SelectImages,
+    },
+    AddContent: {
+      screen: AddContent,
+    },
+  },
+  {
+    headerMode: 'none'
+  }
+);
+
 const RootStack = createStackNavigator(
   {
     Main: {
@@ -61,6 +80,9 @@ const RootStack = createStackNavigator(
     Login: {
       screen: LoginContainer,
     },
+    AddPost: {
+      screen: AddPostStack,
+    },
   },
   {
     mode: 'modal',
@@ -68,7 +90,21 @@ const RootStack = createStackNavigator(
   }
 );
 
+interface UserInfoResponse extends ResponseData {
+  username: string;
+}
+
 export default class App extends React.Component<{}> {
+  public componentDidMount() {
+    HttpRequestDelegate.request(
+      GET_USER_INFO_API,
+      {},
+      (data: UserInfoResponse) => {
+
+      }
+    );
+  }
+
   public render() {
     return (
       <Provider store={store}>

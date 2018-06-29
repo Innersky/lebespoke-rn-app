@@ -1,3 +1,4 @@
+import { ImagePicker, Permissions } from 'expo';
 import React from 'react';
 import { View } from 'react-native';
 import { Button, FormInput, Icon, Text } from 'react-native-elements';
@@ -6,7 +7,10 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RootReducer } from '../../reducer';
-import { enterPassword, enterUsername, login } from './user.actions';
+import {
+  enterPassword, enterUsername, login, selectProfileImage,
+  updateProfileImage
+} from './user.actions';
 
 export interface User {
   username: string;
@@ -35,6 +39,10 @@ const mapStateToProps = (state: RootReducer) => {
 class Login extends React.Component<LoginProps> {
   constructor(props: LoginProps) {
     super(props);
+  }
+
+  public async componentWillMount() {
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
   }
 
   public render() {
@@ -82,9 +90,27 @@ class Login extends React.Component<LoginProps> {
             title={'Login'}
             onPress={() => this.props.dispatch(login())}
           />
+          <Button
+            title={'Update profile image'}
+            onPress={this.selectImage}
+          />
         </View>
       </View>
     );
+  }
+
+  private selectImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      mediaTypes: 'Images',
+      quality: 0
+    });
+
+    if (!result.cancelled) {
+      this.props.dispatch(selectProfileImage(result.uri));
+      this.props.dispatch(updateProfileImage());
+    }
   }
 }
 

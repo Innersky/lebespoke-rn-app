@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { NavigationProp, NavigationRoute, NavigationScreenProp } from 'react-navigation';
-import PostListContainer from '../../components/post-list/post-list';
+import PostListContainer from '../../components/post/post-list';
 
 const headerButtons = [
   {
@@ -108,6 +108,10 @@ class Home extends React.Component<HomeProps, HomeState> {
             backgroundColor: '#fff'
           }}
         >
+          <Button
+            title={'Add post'}
+            onPress={() => this.props.navigation.navigate('AddPost')}
+          />
           <PostListContainer navigation={this.props.navigation}/>
         </View>
       </View>

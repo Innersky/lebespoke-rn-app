@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, WebView} from 'react-native';
+import { View, WebView } from 'react-native';
 import { Text } from 'react-native-elements';
 import { NavigationScreenProp } from 'react-navigation';
 

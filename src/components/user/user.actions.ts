@@ -1,6 +1,7 @@
 import { Dispatch } from 'react-redux';
 import { RootReducer } from '../../reducer';
-import { LOGIN_API } from '../../urls';
+import {LOGIN_API, UPLOAD_PROFILE_IMAGE_API} from '../../urls';
+import { AppStorageType, saveStorageItem } from '../../utils/app-storage';
 import HttpRequestDelegate from '../../utils/http-request-delegate';
 import ResponseData from '../../utils/interfaces/http-response';
 
@@ -22,8 +23,16 @@ export const enterPassword = (password: string) => {
   };
 };
 
+export const SELECT_PROFILE_IMAGE = 'SELECT_PROFILE_IMAGE';
+
+export const selectProfileImage = (profileImageUri: string) => {
+  return {
+    type: SELECT_PROFILE_IMAGE,
+    profileImageUri
+  };
+};
+
 interface LoginResponse extends ResponseData {
-  sessionId: string;
   email: string;
   name: {
     first: string;
@@ -48,7 +57,28 @@ export const login = () => {
         method: 'POST',
       },
       (data: LoginResponse) => {
-        alert(`Success! Name: ${data.name.first}, email: ${data.email}`);
+        alert(data.email);
+      }
+    );
+  };
+};
+
+export const updateProfileImage = () => {
+  return (dispatch: Dispatch, getState: () => RootReducer) => {
+    const formData = new FormData();
+    formData.append('profileImage', {
+      uri: getState().login.profileImageUri,
+      type: 'image/jpg',
+      name: 'profileImage.jpg',
+    });
+    return HttpRequestDelegate.request(
+      UPLOAD_PROFILE_IMAGE_API,
+      {
+        body: formData,
+        method: 'POST',
+      },
+      (data: LoginResponse) => {
+        alert(data.code);
       }
     );
   };

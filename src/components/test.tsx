@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'react-native';
 import { connect, Dispatch } from 'react-redux';
-import { changeText } from './post-list/post-list.actions';
+import { changeText } from './post/post-list.actions';
 
 interface TestProps {
   dispatch: Dispatch;

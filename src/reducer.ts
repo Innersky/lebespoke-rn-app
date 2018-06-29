@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import postList, { PostListState } from './components/post-list/post-list.reducer';
+import postList, { PostListState } from './components/post/post-list.reducer';
 import login, { LoginState } from './components/user/user.reducer';
 
 export interface RootReducer {

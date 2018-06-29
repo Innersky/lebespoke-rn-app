@@ -51,6 +51,7 @@
     }
   },
   "dependencies": {
+    "@types/expo": "^27.0.4",
     "@types/react-navigation": "^2.0.6",
     "@types/react-redux": "^6.0.2",
     "@types/redux-thunk": "^2.1.0",
