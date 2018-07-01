@@ -2,6 +2,7 @@ import React from 'react';
 import { View, WebView } from 'react-native';
 import { Text } from 'react-native-elements';
 import { NavigationScreenProp } from 'react-navigation';
+import {DOMAIN_URI} from '../../urls';
 
 export interface PostObj {
   title: string;
@@ -24,14 +25,26 @@ class Post extends React.Component<PostProps> {
 
   public render() {
     return (
-      <WebView
-        source={{uri: 'https://www.lebespoke.com/blog/' +
-          this.props.navigation.state.params.post.urlIdentifier + '/reading-mode'}}
+      <View
         style={{
-          flex: 1,
-          marginTop: -100
+          backgroundColor: '#000',
+          flex: 1
         }}
-      />
+      >
+        <View
+          style={{
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            backgroundColor: '#fff',
+            flex: 1
+          }}
+        >
+          <WebView
+            source={{uri: DOMAIN_URI + '/blog/' +
+              this.props.navigation.state.params.post.urlIdentifier + '/reading-mode'}}
+          />
+        </View>
+      </View>
     );
   }
 }

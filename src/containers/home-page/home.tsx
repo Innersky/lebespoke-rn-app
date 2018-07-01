@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Button, Text } from 'react-native-elements';
+import {Button, Icon, Text} from 'react-native-elements';
 import { NavigationProp, NavigationRoute, NavigationScreenProp } from 'react-navigation';
 import PostListContainer from '../../components/post/post-list';
 
@@ -98,20 +98,52 @@ class Home extends React.Component<HomeProps, HomeState> {
     return (
       <View
         style={{
+          flex: 1,
           backgroundColor: '#000'
         }}
       >
         <View
           style={{
+            flex: 1,
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
             backgroundColor: '#fff'
           }}
         >
-          <Button
-            title={'Add post'}
-            onPress={() => this.props.navigation.navigate('AddPost')}
-          />
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 10,
+              right: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 100
+            }}
+          >
+            <Button
+              title={''}
+              fontSize={0}
+              icon={{
+                name: 'plus',
+                type: 'font-awesome',
+                color: '#fff',
+              }}
+              backgroundColor={'#000'}
+              borderRadius={20}
+              buttonStyle={{
+                paddingRight: 6,
+                paddingLeft: 15,
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 0
+                },
+                shadowOpacity: 0.5,
+                shadowRadius: 5,
+              }}
+              onPress={() => this.props.navigation.navigate('AddPost')}
+            />
+          </View>
           <PostListContainer navigation={this.props.navigation}/>
         </View>
       </View>

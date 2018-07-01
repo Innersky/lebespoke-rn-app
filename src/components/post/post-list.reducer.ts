@@ -7,10 +7,7 @@ export interface PostListState {
   posts?: PostObj[];
 }
 
-interface Action extends ReduxAction {
-  text?: string;
-  posts?: PostObj[];
-}
+interface Action extends ReduxAction, PostListState {}
 
 export default function postList(
   state: PostListState = {
