@@ -1,9 +1,10 @@
 import { Dispatch } from 'react-redux';
 import { RootReducer } from '../../reducer';
-import {LOGIN_API, UPLOAD_PROFILE_IMAGE_API} from '../../urls';
+import {LOGIN_API, LOGOUT_API, UPLOAD_PROFILE_IMAGE_API} from '../../urls';
 import { AppStorageType, saveStorageItem } from '../../utils/app-storage';
 import HttpRequestDelegate from '../../utils/http-request-delegate';
-import ResponseData from '../../utils/interfaces/http-response';
+import ResponseData, {ResponseCode} from '../../utils/interfaces/http-response';
+import {UserObj} from './login';
 
 export const ENTER_USERNAME = 'ENTER_USERNAME';
 
@@ -32,12 +33,38 @@ export const selectProfileImage = (profileImageUri: string) => {
   };
 };
 
+export const SAVE_USER_PROFILE = 'SAVE_USER_PROFILE';
+
+export const saveUserProfile = (user: UserObj | null) => {
+  return {
+    type: SAVE_USER_PROFILE,
+    user
+  };
+};
+
+export const logout = () => {
+  return (dispatch: Dispatch) => {
+    return HttpRequestDelegate.request(
+      LOGOUT_API,
+      {},
+      (data: LoginResponse) => {
+        if (data.code === ResponseCode.SUCCESS) {
+          dispatch(saveUserProfile(null));
+        } else {
+          alert('error logout');
+        }
+      }
+    );
+  };
+};
+
 interface LoginResponse extends ResponseData {
   email: string;
   name: {
     first: string;
     last: string;
   };
+  user: UserObj;
 }
 
 export const login = () => {
@@ -57,7 +84,11 @@ export const login = () => {
         method: 'POST',
       },
       (data: LoginResponse) => {
-        alert(data.email);
+        if (data.code === ResponseCode.SUCCESS) {
+          dispatch(saveUserProfile(data.user));
+        } else {
+          alert('error login');
+        }
       }
     );
   };

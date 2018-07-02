@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, WebView } from 'react-native';
+import { Image, View } from 'react-native';
 import { Text } from 'react-native-elements';
+import FullWidthImage from 'react-native-fullwidth-image';
+import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 import { NavigationScreenProp } from 'react-navigation';
-import {DOMAIN_URI} from '../../urls';
 
 export interface PostObj {
   title: string;
   coverImageSrc: string;
-  urlIdentifier: string;
+  content: string;
+  images: string[];
 }
 
 interface PostProps {
@@ -39,10 +41,14 @@ class Post extends React.Component<PostProps> {
             flex: 1
           }}
         >
-          <WebView
-            source={{uri: DOMAIN_URI + '/blog/' +
-              this.props.navigation.state.params.post.urlIdentifier + '/reading-mode'}}
-          />
+          {this.props.navigation.state.params.post.images.map((image, index) =>
+            <FullWidthImage
+              key={index}
+              source={{uri: image}}
+            />
+          )}
+          <Text h2={true}>{this.props.navigation.state.params.post.title}</Text>
+          <Text>{this.props.navigation.state.params.post.content}</Text>
         </View>
       </View>
     );

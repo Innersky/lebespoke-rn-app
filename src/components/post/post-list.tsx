@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
 import { Text } from 'react-native-elements';
 import FullWidthImage from 'react-native-fullwidth-image';
 import { NavigationScreenProp } from 'react-navigation';
@@ -44,7 +44,13 @@ class PostList extends React.Component<PostListProps> {
           };
         })}
         renderItem={({item}) =>
-          <View style={styles.container}>
+          <TouchableOpacity
+            style={styles.container}
+            onPress={() => this.props.navigation.navigate('Post', {
+              post: item.post
+            })}
+            activeOpacity={0.8}
+          >
             <View style={styles.imageContainer}>
               <FullWidthImage
                 style={styles.image}
@@ -55,13 +61,10 @@ class PostList extends React.Component<PostListProps> {
             <Text
               numberOfLines={2}
               style={styles.text}
-              onPress={() => this.props.navigation.navigate('Post', {
-                post: item.post
-              })}
             >
               {item.post.title}
             </Text>
-          </View>}
+          </TouchableOpacity>}
         numColumns={2}
       />
     );

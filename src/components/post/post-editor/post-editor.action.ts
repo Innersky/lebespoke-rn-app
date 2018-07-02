@@ -1,11 +1,13 @@
 import { ImagePicker } from 'expo';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import ImageInfo = ImagePicker.ImageInfo;
-import {RootReducer} from '../../../reducer';
+import { RootReducer } from '../../../reducer';
+import { ADD_POST_API } from '../../../urls';
 import HttpRequestDelegate from '../../../utils/http-request-delegate';
-import {Dispatch} from 'react-redux';
-import {ADD_POST_API, LOGIN_API} from '../../../urls';
 import ResponseData from '../../../utils/interfaces/http-response';
-import {PostObj} from '../post';
+import { PostObj } from '../post';
+import { fetchPosts } from '../post-list.actions';
 
 export const SELECT_IMAGES = 'SELECT_IMAGES';
 
@@ -25,6 +27,15 @@ export const addImage = (image: ImageInfo) => {
   };
 };
 
+export const ENTER_TITLE = 'ENTER_TITLE';
+
+export const enterTitle = (title: string) => {
+  return {
+    type: ENTER_TITLE,
+    title
+  };
+};
+
 export const ENTER_CONTENT = 'ENTER_CONTENT';
 
 export const enterContent = (content: string) => {
@@ -34,14 +45,56 @@ export const enterContent = (content: string) => {
   };
 };
 
+export const START_POST = 'START_POST';
+
+export const startPost = () => {
+  return {
+    type: START_POST,
+    submitting: true
+  };
+};
+
+export const END_POST = 'END_POST';
+
+export const endPost = () => {
+  return {
+    type: END_POST,
+    submitting: false
+  };
+};
+
 interface AddPostResponse extends ResponseData {
   post: PostObj;
 }
 
 export const sharePost = () => {
-  return (dispatch: Dispatch, getState: () => RootReducer) => {
+  return (dispatch: ThunkDispatch<RootReducer, {}, AnyAction>, getState: () => RootReducer) => {
+    dispatch(startPost());
+    if (!getState().postEditor.images.length) {
+      alert('Please select image');
+      return;
+    }
+    if (getState().postEditor.submitting) {
+      return;
+    }
     const formData = new FormData();
+    formData.append('title', getState().postEditor.title);
     formData.append('content', getState().postEditor.content);
+    getState().postEditor.images.map((image: ImageInfo, index: number) => {
+      if (index === 0) {
+        formData.append('coverImage', {
+          uri: image.uri,
+          type: image.type,
+          name: 'coverImage',
+        });
+      } else {
+        formData.append(`image-${index}`, {
+          uri: image.uri,
+          type: image.type,
+          name: `image-${index}`,
+        });
+      }
+    });
     return HttpRequestDelegate.request(
       ADD_POST_API,
       {
@@ -49,7 +102,12 @@ export const sharePost = () => {
         method: 'POST',
       },
       (data: AddPostResponse) => {
-        alert(data.code);
+        alert(data.code + '\n' + data.message);
+        dispatch(fetchPosts());
+      },
+      () => {return; },
+      () => {
+        dispatch(endPost());
       }
     );
   };

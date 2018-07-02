@@ -1,8 +1,19 @@
 import React from 'react';
 import { View } from 'react-native';
-import {Button, Icon, Text} from 'react-native-elements';
+import { Button, Icon, Text } from 'react-native-elements';
 import { NavigationProp, NavigationRoute, NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { store } from '../../App';
 import PostListContainer from '../../components/post/post-list';
+import { UserObj } from '../../components/user/login';
+import { saveUserProfile } from '../../components/user/user.actions';
+import { RootReducer } from '../../reducer';
+import { GET_USER_INFO_API } from '../../urls';
+import HttpRequestDelegate from '../../utils/http-request-delegate';
+import ResponseData from '../../utils/interfaces/http-response';
+import {Permissions} from 'expo';
 
 const headerButtons = [
   {
@@ -18,8 +29,13 @@ enum HomeTab {
   Shopping
 }
 
+interface UserInfoResponse extends ResponseData {
+  user: UserObj;
+}
+
 interface HomeProps {
   navigation: NavigationScreenProp<HomeNavigationState>;
+  dispatch: ThunkDispatch<RootReducer, {}, AnyAction>;
 }
 
 export interface HomeNavigationState {
@@ -85,6 +101,17 @@ class Home extends React.Component<HomeProps, HomeState> {
     };
   }
 
+  public async componentWillMount() {
+    HttpRequestDelegate.request(
+      GET_USER_INFO_API,
+      {},
+      (data: UserInfoResponse) => {
+        this.props.dispatch(saveUserProfile(data.user));
+      }
+    );
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
+  }
+
   public componentDidMount() {
     this.props.navigation.setParams({
       selectedTab: this.state.selectedTab,
@@ -141,7 +168,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 shadowOpacity: 0.5,
                 shadowRadius: 5,
               }}
-              onPress={() => this.props.navigation.navigate('AddPost')}
+              onPress={this.addPost}
             />
           </View>
           <PostListContainer navigation={this.props.navigation}/>
@@ -149,6 +176,16 @@ class Home extends React.Component<HomeProps, HomeState> {
       </View>
     );
   }
+
+  private addPost = () => {
+    if (store.getState().login.user) {
+      this.props.navigation.navigate('AddPost');
+    } else {
+      this.props.navigation.navigate('Login');
+    }
+  }
 }
 
-export default Home;
+const HomeContainer = connect(() => ({}))(Home);
+
+export default HomeContainer;

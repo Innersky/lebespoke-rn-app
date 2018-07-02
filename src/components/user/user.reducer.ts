@@ -1,16 +1,21 @@
 import { ReduxAction } from '../../utils/interfaces/redux-action';
-import {ENTER_PASSWORD, ENTER_USERNAME, SELECT_PROFILE_IMAGE} from './user.actions';
+import {
+  ENTER_PASSWORD, ENTER_USERNAME, SAVE_USER_PROFILE,
+  SELECT_PROFILE_IMAGE
+} from './user.actions';
+import {UserObj} from './login';
 
-export interface LoginState {
+export interface LoginReduxState {
   username?: string;
   password?: string;
   profileImageUri?: string;
+  user?: UserObj;
 }
 
-interface Action extends ReduxAction, LoginState {}
+interface Action extends ReduxAction, LoginReduxState {}
 
 export default function login(
-  state: LoginState = {
+  state: LoginReduxState = {
     username: '',
     password: '',
     profileImageUri: ''
@@ -32,6 +37,11 @@ export default function login(
       return {
         ...state,
         profileImageUri: action.profileImageUri
+      };
+    case SAVE_USER_PROFILE:
+      return {
+        ...state,
+        user: action.user
       };
     default:
       return state;

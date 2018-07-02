@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@types/expo": "^27.0.4",
+    "@types/react-native-snap-carousel": "^3.6.3",
     "@types/react-navigation": "^2.0.6",
     "@types/react-redux": "^6.0.2",
     "@types/redux-thunk": "^2.1.0",
@@ -60,6 +61,7 @@
     "react-native": "~0.55.2",
     "react-native-elements": "^0.19.1",
     "react-native-fullwidth-image": "^0.1.2",
+    "react-native-snap-carousel": "^3.7.2",
     "react-navigation": "^2.3.1",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",

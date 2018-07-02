@@ -1,32 +1,42 @@
 import { ImagePicker } from 'expo';
 import React from 'react';
-import {Image, TouchableOpacity, View} from 'react-native';
-import {Button, FormInput, Icon, Text} from 'react-native-elements';
+import { Image, TouchableOpacity, View } from 'react-native';
+import { Button, FormInput, Icon, Text } from 'react-native-elements';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RootReducer } from '../../../reducer';
-import {addImage, enterContent, sharePost} from './post-editor.action';
+import { addImage, enterContent, enterTitle, sharePost } from './post-editor.action';
 import ImageInfo = ImagePicker.ImageInfo;
+import { PostEditorReduxState } from './post-editor.reducer';
 
-interface AddContentProps {
+interface AddContentProps extends PostEditorReduxState {
   navigation: NavigationScreenProp<{}>;
   dispatch: ThunkDispatch<RootReducer, {}, AnyAction>;
   images: ImageInfo[];
   content: string;
 }
 
-const mapStateToProps = (state: RootReducer) => {
+const mapStateToProps: (state: RootReducer) => PostEditorReduxState = (state: RootReducer) => {
   return {
     images: state.postEditor.images,
-    content: state.postEditor.content
+    content: state.postEditor.content,
+    submitting: state.postEditor.submitting,
+    title: state.postEditor.title
   };
 };
 
+interface AddContentNavigatorParams {
+  sharePost: () => void;
+  submitting: boolean;
+}
+
 class AddContent extends React.Component<AddContentProps> {
   public static navigationOptions = (
-    {navigation}: {navigation: NavigationScreenProp<{}>}) => {
+    {navigation}: {navigation: NavigationScreenProp<{
+        params: AddContentNavigatorParams
+      }, AddContentNavigatorParams>}) => {
     return {
       headerTitle: 'Share Post',
       headerLeft: (
@@ -47,8 +57,14 @@ class AddContent extends React.Component<AddContentProps> {
             fontWeight: 'bold',
             marginRight: 10
           }}
-          onPress={() => navigation.getParam('sharePost')()}
+          onPress={() => navigation.state.params.sharePost()}
         >
+          {navigation.getParam('submitting') &&
+            <Icon
+              type="font-awesome"
+              name="spinner"
+            />
+          }
           Share
         </Text>
       )
@@ -61,9 +77,16 @@ class AddContent extends React.Component<AddContentProps> {
 
   public componentWillMount() {
     this.props.navigation.setParams({
-      sharePost: () => this.props.dispatch(sharePost())
+      sharePost: () => this.props.dispatch(sharePost()),
+      submitting: false
     });
   }
+
+  // public componentWillReceiveProps(nextProps: AddContentProps) {
+  //   this.props.navigation.setParams({
+  //     submitting: nextProps.submitting
+  //   });
+  // }
 
   public render() {
     return (
@@ -81,6 +104,10 @@ class AddContent extends React.Component<AddContentProps> {
             flex: 1
           }}
         >
+          <FormInput
+            placeholder={'Title'}
+            onChangeText={(title: string) => this.props.dispatch(enterTitle(title))}
+          />
           <FormInput
             containerStyle={{
               borderBottomWidth: 0,
@@ -135,7 +162,7 @@ class AddContent extends React.Component<AddContentProps> {
   private selectImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'Images',
-      quality: 0.5
+      quality: 0
     });
 
     if (!result.cancelled) {

@@ -2,15 +2,15 @@ import { ReduxAction } from '../../utils/interfaces/redux-action';
 import { PostObj } from './post';
 import { CHANGE_TEXT, RECEIVE_POSTS, REQUEST_POSTS } from './post-list.actions';
 
-export interface PostListState {
+export interface PostListReduxState {
   text?: string;
   posts?: PostObj[];
 }
 
-interface Action extends ReduxAction, PostListState {}
+interface Action extends ReduxAction, PostListReduxState {}
 
 export default function postList(
-  state: PostListState = {
+  state: PostListReduxState = {
     text: 'tasdqwq',
     posts: []
   },

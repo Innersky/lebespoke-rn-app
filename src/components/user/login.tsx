@@ -8,23 +8,24 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RootReducer } from '../../reducer';
 import {
-  enterPassword, enterUsername, login, selectProfileImage,
+  enterPassword, enterUsername, login, logout, selectProfileImage,
   updateProfileImage
 } from './user.actions';
+import { LoginReduxState } from './user.reducer';
 
-export interface User {
+export interface UserObj {
   username: string;
-  firstName: string;
-  lastName: string;
+  name: {
+    first: string;
+    last: string;
+  };
   profileImageSrc: string;
   email: string;
   type: string;
   description?: string;
 }
 
-interface LoginProps {
-  username: string;
-  password: string;
+interface LoginProps extends LoginReduxState {
   navigation: NavigationScreenProp<{}>;
   dispatch: ThunkDispatch<RootReducer, {}, AnyAction>;
 }
@@ -32,7 +33,8 @@ interface LoginProps {
 const mapStateToProps = (state: RootReducer) => {
   return {
     username: state.login.username,
-    password: state.login.password
+    password: state.login.password,
+    user: state.login.user,
   };
 };
 
@@ -41,13 +43,13 @@ class Login extends React.Component<LoginProps> {
     super(props);
   }
 
-  public async componentWillMount() {
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-  }
-
   public render() {
     return (
-      <View>
+      <View
+        style={{
+          paddingTop: 20
+        }}
+      >
         <View
           style={{
             flexDirection: 'column',
@@ -62,39 +64,53 @@ class Login extends React.Component<LoginProps> {
             size={36}
           />
         </View>
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text>Login</Text>
-          <FormInput
+        {!this.props.user ?
+          (<View
             style={{
-              margin: 10
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-            placeholder={'Username'}
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={(text: string) => this.props.dispatch(enterUsername(text))}
-          />
-          <FormInput
+          >
+            <Text>Login</Text>
+            <FormInput
+              style={{
+                margin: 10
+              }}
+              placeholder={'Username'}
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={(text: string) => this.props.dispatch(enterUsername(text))}
+            />
+            <FormInput
+              style={{
+                margin: 10
+              }}
+              placeholder={'Password'}
+              secureTextEntry={true}
+              onChangeText={(text: string) => this.props.dispatch(enterPassword(text))}
+            />
+            <Button
+              title={'Login'}
+              onPress={() => this.props.dispatch(login())}
+            />
+          </View>) :
+          (<View
             style={{
-              margin: 10
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-            placeholder={'Password'}
-            secureTextEntry={true}
-            onChangeText={(text: string) => this.props.dispatch(enterPassword(text))}
-          />
-          <Button
-            title={'Login'}
-            onPress={() => this.props.dispatch(login())}
-          />
-          <Button
-            title={'Update profile image'}
-            onPress={this.selectImage}
-          />
-        </View>
+          >
+            <Text>Hi, {this.props.user.name.first + ' ' + this.props.user.name.last}</Text>
+            <Button
+              title={'Update profile image'}
+              onPress={this.selectImage}
+            />
+            <Button
+              title={'Logout'}
+              onPress={() => this.props.dispatch(logout())}
+            />
+          </View>)
+        }
       </View>
     );
   }
