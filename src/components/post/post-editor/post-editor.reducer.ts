@@ -1,7 +1,7 @@
 import { ImagePicker } from 'expo';
 import { ReduxAction } from '../../../utils/interfaces/redux-action';
 import ImageInfo = ImagePicker.ImageInfo;
-import {ADD_IMAGE, ENTER_CONTENT, ENTER_TITLE} from './post-editor.action';
+import {ADD_IMAGE, DISMISS_POST_EDITING, ENTER_CONTENT, ENTER_TITLE} from './post-editor.action';
 
 export interface PostEditorReduxState {
   content: string;
@@ -14,13 +14,15 @@ interface Action extends ReduxAction, PostEditorReduxState {
   image: ImageInfo;
 }
 
+const initialState = {
+  images: [],
+  title: '',
+  content: '',
+  submitting: false,
+};
+
 export default function postEditor(
-  state: PostEditorReduxState = {
-    images: [],
-    title: '',
-    content: '',
-    submitting: false,
-  },
+  state: PostEditorReduxState = initialState,
   action: Action
 ) {
   switch (action.type) {
@@ -39,6 +41,8 @@ export default function postEditor(
         ...state,
         content: action.content
       };
+    case DISMISS_POST_EDITING:
+      return initialState;
     default:
       return state;
   }

@@ -63,6 +63,14 @@ export const endPost = () => {
   };
 };
 
+export const DISMISS_POST_EDITING = 'DISMISS_POST_EDITING';
+
+export const dismissPostEditing = () => {
+  return {
+    type: DISMISS_POST_EDITING
+  };
+};
+
 interface AddPostResponse extends ResponseData {
   post: PostObj;
 }
@@ -103,6 +111,7 @@ export const sharePost = () => {
       },
       (data: AddPostResponse) => {
         alert(data.code + '\n' + data.message);
+        dispatch(dismissPostEditing());
         dispatch(fetchPosts());
       },
       () => {return; },

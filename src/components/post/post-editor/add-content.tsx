@@ -105,6 +105,7 @@ class AddContent extends React.Component<AddContentProps> {
           }}
         >
           <FormInput
+            value={this.props.title}
             placeholder={'Title'}
             onChangeText={(title: string) => this.props.dispatch(enterTitle(title))}
           />
@@ -113,6 +114,7 @@ class AddContent extends React.Component<AddContentProps> {
               borderBottomWidth: 0,
               minHeight: 200
             }}
+            value={this.props.content}
             multiline={true}
             placeholder={'Share your experience...'}
             onChangeText={(content: string) => this.props.dispatch(enterContent(content))}

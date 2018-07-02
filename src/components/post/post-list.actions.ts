@@ -46,7 +46,6 @@ export const fetchPosts = () => {
       {},
       (data: FetchPostResponse) => {
         dispatch(receivePosts(data.posts));
-        console.log(data);
       }
     );
   };
