@@ -8,6 +8,7 @@ import HttpRequestDelegate from '../../../utils/http-request-delegate';
 import ResponseData from '../../../utils/interfaces/http-response';
 import { PostObj } from '../post';
 import { fetchPosts } from '../post-list.actions';
+import {NavigationAction, NavigationActions} from 'react-navigation';
 
 export const SELECT_IMAGES = 'SELECT_IMAGES';
 
@@ -78,6 +79,12 @@ interface AddPostResponse extends ResponseData {
 export const sharePost = () => {
   return (dispatch: ThunkDispatch<RootReducer, {}, AnyAction>, getState: () => RootReducer) => {
     dispatch(startPost());
+    dispatch(NavigationActions.setParams({
+      key: 'AddContent',
+      params: {
+        submitting: true
+      }
+    }));
     if (!getState().postEditor.images.length) {
       alert('Please select image');
       return;
@@ -112,6 +119,7 @@ export const sharePost = () => {
       (data: AddPostResponse) => {
         alert(data.code + '\n' + data.message);
         dispatch(dismissPostEditing());
+        dispatch(NavigationActions.back());
         dispatch(fetchPosts());
       },
       () => {return; },
